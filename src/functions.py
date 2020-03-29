@@ -16,14 +16,7 @@ def generate_dict_formula(df):
 
     return list_dict_formules
 
-
-def generate_rapport_incoherence(df, list_dict_formules, date, path, write=True):
-    """Inputs: dataframe and list_dict_formules
-    outputs: 2 dataframes, one with synthethic error metrics and one with the rows
-    errors """
-
-    list_var = [x["total"] for x in list_dict_formules]
-
+ def add_incoherence_metrics_to_df(df, list_dict_formules):
     # test if the diff between total and sum of variables are equal
     def test_total(row):
         if all([pd.isnull(row[x]) for x in [var_tot] + test["list_variable_somme"]]):
@@ -51,6 +44,20 @@ def generate_rapport_incoherence(df, list_dict_formules, date, path, write=True)
     list_diff_var = [x for x in df.columns if x[:5] == "diff_"]
 
     df["sum_test"] = df.apply(lambda row: sum([row[x] for x in list_test_var]), axis=1)
+
+    return df
+
+
+
+def generate_rapport_incoherence(df, list_dict_formules, date, path, write=True):
+    """Inputs: dataframe and list_dict_formules
+    outputs: 2 dataframes, one with synthethic error metrics and one with the rows
+    errors """
+
+    df0 = df.copy(deep = True)
+
+    list_var = [x["total"] for x in list_dict_formules]
+    df = add_incoherence_metrics_to_df(df, list_dict_formules)
     sub_df = df.loc[(df['sum_test'] > 0)]
 
     nb_ligne_err = len(sub_df)
@@ -74,8 +81,8 @@ def generate_rapport_incoherence(df, list_dict_formules, date, path, write=True)
 
     if write:
         writer = pd.ExcelWriter(path)
-        res.to_excel(writer, 'synthese', index=False)
-        sub_df.to_excel(writer, 'lignes_erreur', index=False)
+        res.to_excel(writer, 'synthese_genre', index=False)
+        sub_df.to_excel(writer, 'lignes_erreur_genre', index=False)
         writer.save()
 
     return res, sub_df
