@@ -19,17 +19,17 @@ Pour chacun de ces fichiers, le script génère un rapport avec les incohérence
 
 ## Faire tourner le script  
 
-1 - Pré-requis
+### 1 - Pré-requis
 
 Python 3 
 
 
-2 - Récupération du dépôt 
+### 2 - Récupération du dépôt 
 
 $ git clone https://github.com/KimMontalibet/data_covid
 $ cd data_covid
 
-3 - Lancer le script 
+### 3 - Lancer le script 
 
 Il faut spécifier le **dossier_input** contenant les fichiers *.csv* mentionnés en introduction, l'**dossier_output** dans lequel enregistrer les rapports d'incohérences (au format *.xlsx*), la **date** des fichiers au format.
 
