@@ -26,8 +26,10 @@ Python 3
 
 ### 2 - Récupération du dépôt 
 
+```
 $ git clone https://github.com/KimMontalibet/data_covid
 $ cd data_covid
+```
 
 ### 3 - Lancer le script 
 
