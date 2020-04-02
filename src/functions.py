@@ -20,7 +20,7 @@ def generate_dict_formula(df):
 def add_incoherence_metrics_to_df(df, list_dict_formules):
     # test if the diff between total and sum of variables are equal
     def test_total(row):
-        if all([pd.isnull(row[x]) for x in [var_tot] + test["list_variable_somme"]]):
+        if any([pd.isnull(row[x]) for x in [var_tot] + test["list_variable_somme"]]):
             return 0
         else:
             return 1 - int(bool(sum([row[x] for x in test["list_variable_somme"]]) == row[var_tot]))
@@ -101,24 +101,28 @@ def generate_rapport_incoherence_long(df0, var_groupby, path, write=True):
     sub_df = df.loc[(df['sum_test'] > 0)]
 
     nb_ligne_err = len(sub_df)
-    list_metriques = ["Lignes avec une erreur de cohérence"] + \
+    nb_ligne_total = len(df)
+
+    list_metriques = ["Nombre total de lignes", "Lignes avec une erreur de cohérence"] + \
                      ["Lignes avec une erreur de cohérence pour la variable " + x for x in list_var]
 
     # colonnes: Nombre, Moyenne différence, Min diff, Max diff
     list_test_var = [x for x in df.columns if x[:5] == "test_"]
     list_diff_var = [x for x in df.columns if x[:5] == "diff_"]
-    list_nombre = [nb_ligne_err] + list(sub_df[list_test_var].sum().values)
-    list_moyenne_diff = [np.nan] + list(sub_df[list_diff_var].replace(0, np.nan).mean().values)
-    list_min_diff = [np.nan] + list(sub_df[list_diff_var].replace(0, np.nan).min().values)
-    list_max_diff = [np.nan] + list(sub_df[list_diff_var].replace(0, np.nan).max().values)
+    list_nombre = [nb_ligne_total, nb_ligne_err] + list(sub_df[list_test_var].sum().values)
+    list_moyenne_diff = [np.nan, np.nan] + list(sub_df[list_diff_var].replace(0, np.nan).mean().values)
+    list_min_diff = [np.nan, np.nan] + list(sub_df[list_diff_var].replace(0, np.nan).min().values)
+    list_max_diff = [np.nan, np.nan] + list(sub_df[list_diff_var].replace(0, np.nan).max().values)
 
     res = pd.DataFrame({"Metrique": list_metriques,
                         "Nombre de lignes": list_nombre,
+                        "% de Lignes": [x * 100 / nb_ligne_total for x in list_nombre],
                         "Moyenne de la différence": list_moyenne_diff,
                         "Min de la différence": list_min_diff,
                         "Max de la différence": list_max_diff})
 
-    sub_df2 = pd.merge(sub_df[["date_de_passage", "dep"]], df_cl, on=["date_de_passage", "dep"])
+
+    sub_df2 = pd.merge(sub_df[var_groupby], df_cl, on=var_groupby)
     sub_df_concat = pd.concat([sub_df, sub_df2], sort=False)
     sub_df_concat = sub_df_concat.sort_values(by="numero_ligne")
 
