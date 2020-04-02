@@ -12,7 +12,7 @@ Ce script Python permet de générer un résumé des incohérences présentes da
 
 
 ### Données des urgences hospitalières et de SOS médecins relatives à l'épidémie de COVID-19 (disponibles [ici](https://www.data.gouv.fr/fr/datasets/donnees-des-urgences-hospitalieres-et-de-sos-medecins-relatives-a-lepidemie-de-covid-19/))
-- **sursaud-covid19-quotidien-2020-xx-xx-xxhxx.csv** : données hospitalières quotidiennes relatives à l'épidémie du COVID-19 par département et sexe du patient : nombre de patients hospitalisés, nombre de personnes actuellement en réanimation ou soins intensifs, nombre cumulé de personnes retournées à domicile, nombre cumulé de personnes décédées
+- **sursaud-covid19-quotidien-2020-xx-xx-19h00-departement.csv** : données hospitalières quotidiennes relatives à l'épidémie du COVID-19 par département et sexe du patient : nombre de patients hospitalisés, nombre de personnes actuellement en réanimation ou soins intensifs, nombre cumulé de personnes retournées à domicile, nombre cumulé de personnes décédées
 - **sursaud-covid19-hebdomadaire-2020-xx-xx-xxhxx.csv**:  données hebdomadaires de SOS médecins et des urgences hospitalières par département et par tranches d’âge des patients (nombre de passages aux urgences pour suspicion de COVID-19, nombre total de passages aux urgences, nombre d’hospitalisations parmi les passages aux urgences pour suspicion de COVID-19, nombres total d’actes médicaux SOS Médecins pour suspicion de COVID-19, nombres d’actes médicaux SOS Médecins)
 
 Pour chacun de ces fichiers, le script génère un rapport avec les incohérences liées aux totaux par genre et par tranche d'âges. 
