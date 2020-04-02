@@ -1,4 +1,4 @@
-# Génération de rapports d'incohérence sur les données Covid 19 sur Data.Gouv.fr
+# Génération de rapports d'incohérence sur les données Covid 19 sur [Data.Gouv.fr](https://www.data.gouv.fr/fr/)
 
 
 
@@ -44,5 +44,49 @@ python3 ./src/main.py dossier_input dossier_output date
 
 Les fichiers contiennent des variables de comptage (nombre de patients hospitalisés pour cause de covid19, nombre de décès liés au covid19) qui sont données par total et par décomposition en fonction du genre et des classes d'âges. Les tests de cohérences effectués permettent de vérifier que la somme des comptages par genre et/ou classe d'âges est égal au total. Si pour une ligne donnée, la somme diffère, alors on calcule l'écart (total - somme sur le genre et/ou classe d'âge). 
 
-Plus précisément pour chaque fichier, le rapport d'incohérence contient deux 
+Plus précisément pour chaque fichier, le rapport d'incohérence contient deux onglets: 
+
+### Un onglet avec des métriques synthétiques (appelé *synthèse*) 
+Pour le fichier, on donne: 
+- le nombre total de lignes
+- le nombre total de lignes avec au moins une incohérence
+
+Pour chaque variable, on donne: 
+- le nombre de lignes avec une incohérence
+- le moyenne, le minimum et le maximum de la différence entre le total et la somme
+
+### Un onglet avec les lignes comportant des incohérences (appelé *erreurs*)
+
+Cet onglet comporte toutes les lignes avec au moins une incohérence. On a rajouté les colonnes suivantes: 
+- *numero_ligne*: donne le numéro de la ligne dans le fichier initial (numérotées de 1 à n) 
+- *columnn_test*: pour la colonne de nom *column* vaut 0 si la ligne ne comporte pas d'erreur et 1 si elle comporte une erreur 
+- *column_diff*: pour la colonne de nom *column*, la différence entre le total et la somme 
+- *sum_test*: la somme de toutes les colonnes de type *column_test* et qui correspond donc au nombre de colonnes avec une erreur de cohérence pour la ligne considérée
+
+
+## Détail des rapports par fichier 
+
+### Fichier sursaud_corona_quot : 
+- Le nombre d’erreurs de sommes hommes + femmes, avec une déclinaison par indicateur (feuille 1)
+- La liste des lignes erronées détectées pour les sommes par genre (feuille 2)
+- Le nombre d’erreurs de sommes des tranches d’âges, avec déclinaison par indicateur (feuille 3)
+- La liste des lignes erronées détectées pour les sommes par tranches d'âges (feuille 4)
+
+### Fichier sursaud_corona_hebdo : 
+- Le nombre d’erreurs de sommes des tranches d’âges, avec déclinaison par indicateur (feuille 1)
+- La liste des lignes erronées détectées par tranche d'âges (feuille 2)
+
+### Fichier covid_hospi_29 :
+- Le nombre d’erreurs de sommes hommes + femmes, avec une déclinaison par indicateur (feuille 1)
+- La liste des lignes erronées détectées par genre (feuille 2)
+
+### Fichier donnees-hospitalieres-etablissements: 
+- Le nombre de lignes avec une incohérence sur les sommes cumulées (somme *jour n+1* inférieure à la somme du *jour n* (feuille 1) 
+- La liste des lignes erronnées détectées pour les sommes cumulées (feuille 2)
+
+
+
+
+
+
 
