@@ -15,10 +15,10 @@ import openpyxl
 import os
 
 # Import additional library for loading bar
-from functions import generate_dict_formula, generate_rapport_incoherence_genre_wide, generate_rapport_incoherence_long
-from functions import add_incoherence_metrics_to_df
+from utils import generate_dict_formula, generate_rapport_incoherence_genre_wide, generate_rapport_incoherence_long
+from utils import add_incoherence_metrics_to_df
 # Set the logger
-logging.basicConfig(filename="incoherence_report.log", level=logging.INFO)
+logging.basicConfig(filename="./logs/incoherence_report.log", level=logging.INFO)
 
 
 if __name__ == "__main__":
