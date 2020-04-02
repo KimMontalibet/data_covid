@@ -47,6 +47,7 @@ if __name__ == "__main__":
         logging.info("processing file {}".format(file_name_short))
 
         df = pd.read_excel(os.path.join(input_folder_path, file))
+        #df = pd.read_csv(os.path.join(input_folder_path, file), sep = ",")
         list_cols = list(df.columns)
         df["numero_ligne"] = df.index + 1
         df = df[["numero_ligne"] + list_cols]
