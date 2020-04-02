@@ -88,9 +88,10 @@ def generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write=
     return res, sub_df
 
 
-def generate_rapport_incoherence_long(df0, var_groupby, path, write=True):
-    df_tot = df0[df0.sursaud_cl_age_corona == "0"]
-    df_cl = df0[df0.sursaud_cl_age_corona != "0"]
+def generate_rapport_incoherence_long(df0, var_to_sum, var_groupby, path, write=True):
+    df0[var_to_sum] = df0[var_to_sum].apply(str)
+    df_tot = df0[df0[var_to_sum] == "0"]
+    df_cl = df0[df0[var_to_sum] != "0"]
     list_var = [x for x in df0.dtypes[df0.dtypes != "object"].index if x != "numero_ligne"]
     df_agg = df_cl.groupby(var_groupby)[list_var].apply(lambda x: x.sum(min_count=1)).reset_index()
     df_agg.columns = var_groupby + [x + "_sum" for x in list_var]
@@ -120,7 +121,6 @@ def generate_rapport_incoherence_long(df0, var_groupby, path, write=True):
                         "Moyenne de la différence": list_moyenne_diff,
                         "Min de la différence": list_min_diff,
                         "Max de la différence": list_max_diff})
-
 
     sub_df2 = pd.merge(sub_df[var_groupby], df_cl, on=var_groupby)
     sub_df_concat = pd.concat([sub_df, sub_df2], sort=False)
