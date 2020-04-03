@@ -168,5 +168,75 @@ if __name__ == "__main__":
         writer.save()
 
 
+    # =============================================================================
+    # covid trois laba quot
+    # =============================================================================
+
+    file_name_short = "covid_troislabo_quot"
+    try:
+        file = [x for x in list_files if file_name_short in x][0]
+    except Exception as e:
+        logging.warning("Error : {0}. File corresponding to {1} not found".format(e, file_name_short))
+        file = None
+
+    if file:
+        logging.info("processing file {}".format(file_name_short))
+        df = pd.read_csv(input_folder_path + file, sep = ";")
+
+        list_cols = list(df.columns)
+        df["numero_ligne"] = df.index + 1
+        df = df[["numero_ligne"] + list_cols]
+
+        # save dataframe for second report on classe d'âge
+        df0 = df.copy(deep = True)
+
+        list_dict_formules = generate_dict_formula(df)
+        path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+        res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write = False)
+
+        var_groupby = ["dep", "jour"]
+        res2, sub_df2 = generate_rapport_incoherence_long(df0, "clage_covid", var_groupby, path, write = False)
+
+        writer = pd.ExcelWriter(path)
+        res.to_excel(writer, 'synthese_genre', index=False)
+        sub_df.to_excel(writer, 'lignes_erreur_genre', index=False)
+        res2.to_excel(writer, 'synthese_cl_age', index=False)
+        sub_df2.to_excel(writer, 'lignes_cl_age', index=False)
+        writer.save()
 
 
+        # =============================================================================
+        # covid trois laba heb
+        # =============================================================================
+
+        file_name_short = "covid_troislabo_heb"
+        try:
+            file = [x for x in list_files if file_name_short in x][0]
+        except Exception as e:
+            logging.warning("Error : {0}. File corresponding to {1} not found".format(e, file_name_short))
+            file = None
+
+        if file:
+            logging.info("processing file {}".format(file_name_short))
+            df = pd.read_csv(input_folder_path + file, sep=";")
+
+            list_cols = list(df.columns)
+            df["numero_ligne"] = df.index + 1
+            df = df[["numero_ligne"] + list_cols]
+
+            # save dataframe for second report on classe d'âge
+            df0 = df.copy(deep=True)
+
+            list_dict_formules = generate_dict_formula(df)
+            path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+            res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write=False)
+
+            var_groupby = ["dep", "week"]
+            res2, sub_df2 = generate_rapport_incoherence_long(df0, "clage_covid", var_groupby, path, write=False)
+
+            writer = pd.ExcelWriter(path)
+            res.to_excel(writer, 'synthese_genre', index=False)
+            sub_df.to_excel(writer, 'lignes_erreur_genre', index=False)
+            res2.to_excel(writer, 'synthese_cl_age', index=False)
+            sub_df2.to_excel(writer, 'lignes_cl_age', index=False)
+            writer.save()
