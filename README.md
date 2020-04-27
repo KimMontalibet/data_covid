@@ -33,10 +33,10 @@ $ cd data_covid
 
 ### 3 - Lancer le script 
 
-Il faut spécifier le **dossier_input** contenant les fichiers *.csv* mentionnés en introduction, l'**dossier_output** dans lequel enregistrer les rapports d'incohérences (au format *.xlsx*), la **date** des fichiers au format JJMMAAAA.
-
+Il faut spécifier l'**dossier_output** dans lequel vont être enregistrés les rapports d'incohérences (au format *.xlsx*) et la **date** des fichiers au format JJMMAAAA.
+Les fichiers d'inputs sont lus directement via les url du site data.gouv.fr. 
 ```
-python3 ./src/main.py dossier_input dossier_output date
+python3 ./src/main.py dossier_output date
 ```
  
 
