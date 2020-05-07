@@ -13,6 +13,9 @@ import sys
 import logging
 import pandas as pd
 import ssl
+from urllib.request import urlopen
+
+
 
 # Import additional library for loading bar
 from utils import generate_dict_formula, generate_rapport_incoherence_genre_wide, generate_rapport_incoherence_long
@@ -22,15 +25,8 @@ logging.basicConfig(filename="./logs/incoherence_report.log", level=logging.INFO
 
 if __name__ == "__main__":
 
-    #input_folder_path = sys.argv[1]
-    output_folder_path = sys.argv[1]
-    date = sys.argv[2]
-
-    list_expected_files = ["sursaud-covid19-quotidien",
-                           "sursaud-covid19-hebdomadaire",
-                           "donnees-hospitalieres-covid19",
-                           "donnees-hospitalieres-etablissements-covid19"]
-
+    #output_folder_path = sys.argv[1]
+    output_folder_path = "./output/"
 
     try:
         _create_unverified_https_context = ssl._create_unverified_context
@@ -44,15 +40,16 @@ if __name__ == "__main__":
     # =============================================================================
     # data sursaud covid quot
     # =============================================================================
-    file_name_short = "sursaud-covid19-quotidien"
     try:
-        df = pd.read_excel("https://www.data.gouv.fr/fr/datasets/r/941ff2b4-ea24-4cdf-b0a7-655f2a332fb2")
+        url = "https://www.data.gouv.fr/fr/datasets/r/941ff2b4-ea24-4cdf-b0a7-655f2a332fb2"
+        df = pd.read_excel(url)
+        file_name = urlopen(url).url.split("/")[-1].split(".")[0]
     except Exception as e:
-        logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name_short))
-        file_name_short = None
+        logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name))
+        file_name = None
 
-    if file_name_short:
-        logging.info("processing file {}".format(file_name_short))
+    if file_name:
+        logging.info("processing file {}".format(file_name))
 
         list_cols = list(df.columns)
         df["numero_ligne"] = df.index + 1
@@ -62,7 +59,7 @@ if __name__ == "__main__":
         df0 = df.copy(deep = True)
 
         list_dict_formules = generate_dict_formula(df)
-        path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
         res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write = False)
 
         var_groupby = ["dep", "date_de_passage"]
@@ -79,21 +76,22 @@ if __name__ == "__main__":
     # data covid hospit hebdo
     # =============================================================================
 
-    file_name_short = "sursaud-covid19-hebdomadaire"
     try:
-        df0 = pd.read_csv("https://www.data.gouv.fr/fr/datasets/r/c67aebf7-9883-49ef-a654-c4af5fdf5206", sep = ";")
+        url = "https://www.data.gouv.fr/fr/datasets/r/c67aebf7-9883-49ef-a654-c4af5fdf5206"
+        df0 = pd.read_csv(url, sep = ";")
+        file_name = urlopen(url).url.split("/")[-1].split(".")[0]
     except Exception as e:
-        logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name_short))
-        file_name_short = None
+        logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name))
+        file_name = None
 
-    if file_name_short:
-        logging.info("processing file {}".format(file_name_short))
+    if file_name:
+        logging.info("processing file {}".format(file_name))
         list_cols = list(df0.columns)
         df0["numero_ligne"] = df0.index + 1
         df0 = df0[["numero_ligne"] + list_cols]
 
         var_groupby = ["dep", "semaine"]
-        path =  output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+        path =  output_folder_path + "incoherences_{0}.xlsx".format(file_name)
         res, sub_df = generate_rapport_incoherence_long(df0, "sursaud_cl_age_corona", var_groupby, path)
 
 
@@ -101,22 +99,23 @@ if __name__ == "__main__":
     # data covid hospit
     # =============================================================================
 
-    file_name_short = "donnees-hospitalieres-covid19"
     try:
-        df = pd.read_csv("https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7", sep=";")
+        url = "https://www.data.gouv.fr/fr/datasets/r/63352e38-d353-4b54-bfd1-f1b3ee1cabd7"
+        df = pd.read_csv(url, sep=";")
+        file_name = urlopen(url).url.split("/")[-1].split(".")[0]
     except Exception as e:
-        logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name_short))
-        file_name_short = None
+        logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name))
+        file_name = None
 
-    if file_name_short:
-        logging.info("processing file {}".format(file_name_short))
+    if file_name:
+        logging.info("processing file {}".format(file_name))
 
         list_cols = list(df.columns)
         df["numero_ligne"] = df.index + 1
         df = df[["numero_ligne"] + list_cols]
 
 
-        path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
 
         var_groupby = ["dep", "jour"]
         df0 = df.copy(deep = True)
@@ -176,20 +175,19 @@ if __name__ == "__main__":
         sub_df_concat_rad.to_excel(writer, 'lignes_erreur_rad_cumules', index=False)
         writer.save()
 
-
     # =============================================================================
     # data covid hospit etablissements
     # =============================================================================
-
-    file_name_short = "donnees-hospitalieres-etablissements-covid19"
     try:
-        hosp_cum = pd.read_csv("https://www.data.gouv.fr/fr/datasets/r/41b9bd2a-b5b6-4271-8878-e45a8902ef00", sep = ";")
+        url = "https://www.data.gouv.fr/fr/datasets/r/41b9bd2a-b5b6-4271-8878-e45a8902ef00"
+        hosp_cum = pd.read_csv(url, sep = ";")
+        file_name = urlopen(url).url.split("/")[-1].split(".")[0]
     except Exception as e:
-        logging.warning("Error : {0}. File corresponding to {1} not could not be fetched".format(e, file_name_short))
-        file_name_short = None
+        logging.warning("Error : {0}. File corresponding to {1} not could not be fetched".format(e, file_name))
+        file_name = None
 
-    if file_name_short:
-        logging.info("processing file {}".format(file_name_short))
+    if file_name:
+        logging.info("processing file {}".format(file_name))
         list_cols = list(hosp_cum.columns)
         # hosp_cum.sort_values(by = ["dep", "jour"], inplace = True)
 
@@ -211,7 +209,7 @@ if __name__ == "__main__":
         sub_df_concat.sort_values(by="id", inplace=True)
         sub_df_concat.drop("id", axis=1, inplace=True)
 
-        path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
 
         res = pd.DataFrame({"Metrique": ["Nombre de lignes total", "Nombre de lignes avec incohérence"],
                             "Nombre": [len(hosp_cum), len(sub_df)]})
@@ -221,20 +219,19 @@ if __name__ == "__main__":
         sub_df_concat.to_excel(writer, 'lignes_erreur', index=False)
         writer.save()
 
-
     # =============================================================================
     # covid trois laba quot
     # =============================================================================
-
-    file_name_short = "donnees-tests-covid19-labo-quotidien"
     try:
-        df = pd.read_csv("https://www.data.gouv.fr/fr/datasets/r/b4ea7b4b-b7d1-4885-a099-71852291ff20", sep = ";")
+        url = "https://www.data.gouv.fr/fr/datasets/r/b4ea7b4b-b7d1-4885-a099-71852291ff20"
+        df = pd.read_csv(url, sep = ";")
+        file_name = urlopen(url).url.split("/")[-1].split(".")[0]
     except Exception as e:
-        logging.warning("Error : {0}. File corresponding to {1} not could not be fetched".format(e, file_name_short))
-        file_name_short = None
+        logging.warning("Error : {0}. File corresponding to {1} not could not be fetched".format(e, file_name))
+        file_name = None
 
-    if file_name_short:
-        logging.info("processing file {}".format(file_name_short))
+    if file_name:
+        logging.info("processing file {}".format(file_name))
 
         list_cols = list(df.columns)
         df["numero_ligne"] = df.index + 1
@@ -244,7 +241,7 @@ if __name__ == "__main__":
         df0 = df.copy(deep = True)
 
         list_dict_formules = generate_dict_formula(df)
-        path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
         res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write = False)
 
         var_groupby = ["dep", "jour"]
@@ -257,20 +254,19 @@ if __name__ == "__main__":
         sub_df2.to_excel(writer, 'lignes_cl_age', index=False)
         writer.save()
 
-
         # =============================================================================
         # covid trois laba heb
         # =============================================================================
-
-        file_name_short = "donnees-tests-covid19-labo-hebdomadaire"
         try:
-            df = pd.read_csv("https://www.data.gouv.fr/fr/datasets/r/72050bc8-9959-4bb1-88a0-684ff8db5fb5", sep=";")
+            url = "https://www.data.gouv.fr/fr/datasets/r/72050bc8-9959-4bb1-88a0-684ff8db5fb5"
+            df = pd.read_csv(url, sep=";")
+            file_name = urlopen(url).url.split("/")[-1].split(".")[0]
         except Exception as e:
-            logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name_short))
-            file_name_short = None
+            logging.warning("Error : {0}. File corresponding to {1} could not be fetched".format(e, file_name))
+            file_name = None
 
-        if file_name_short:
-            logging.info("processing file {}".format(file_name_short))
+        if file_name:
+            logging.info("processing file {}".format(file_name))
             list_cols = list(df.columns)
             df["numero_ligne"] = df.index + 1
             df = df[["numero_ligne"] + list_cols]
@@ -279,7 +275,7 @@ if __name__ == "__main__":
             df0 = df.copy(deep=True)
 
             list_dict_formules = generate_dict_formula(df)
-            path = output_folder_path + "{0}_incoherence_{1}.xlsx".format(file_name_short, date)
+            path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
             res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write=False)
 
             var_groupby = ["dep", "week"]
