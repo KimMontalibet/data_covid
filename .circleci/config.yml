@@ -23,7 +23,7 @@ jobs:
           command: |
             cd ~/repo
             if [ -n "$(git status --porcelain)" ]; then
-              git add data
+              git add .
               git commit -m "New data at $(date -u +'%Y-%m-%dT%H:%M:%SZ') [skip ci]"
               git push origin master
             else
