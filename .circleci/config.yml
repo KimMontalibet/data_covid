@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Fetch data
           command: |
-            cd ~/repo/src && pip install -r requirements.txt && python main.py
+            cd ~/repo/src/output && rm * && cd ~/repo/src && pip install -r requirements.txt && python main.py
       - run:
           name: Set Git identity
           command: |
@@ -37,7 +37,7 @@ workflows:
   cron:
     triggers:
       - schedule:
-          cron: "20 19 * * *"
+          cron: "25 19 * * *"
           filters:
             branches:
               only:
