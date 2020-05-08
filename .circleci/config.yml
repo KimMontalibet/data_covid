@@ -1,0 +1,46 @@
+version: 2
+jobs:
+  fetch_csv:
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout:
+          path: ~/repo
+      - add_ssh_keys:
+          fingerprints:
+            - "b3:6b:98:3a:64:86:51:ce:18:d6:df:55:7a:11:0f:14"
+      - run:
+          name: Fetch data
+          command: |
+            cd ~/repo/src && pip install -r requirements.txt && python main.py
+      - run:
+          name: Set Git identity
+          command: |
+            git config --global user.email "kim.montalibet@gmail.com"
+            git config --global user.name "KimMontalibet"
+      - run:
+          name: Push to GitHub
+          command: |
+            cd ~/repo
+            if [ -n "$(git status --porcelain)" ]; then
+              git add data
+              git commit -m "New data at $(date -u +'%Y-%m-%dT%H:%M:%SZ') [skip ci]"
+              git push origin master
+            else
+              echo "No changes";
+            fi
+workflows:
+  version: 2
+  fetch_and_push:
+    jobs:
+      - fetch_csv
+  cron:
+    triggers:
+      - schedule:
+          cron: "01 20 * * *"
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - fetch_csv
