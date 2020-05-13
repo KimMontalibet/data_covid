@@ -59,7 +59,7 @@ if __name__ == "__main__":
         df0 = df.copy(deep = True)
 
         list_dict_formules = generate_dict_formula(df)
-        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
+        path = output_folder_path + "incoherences_{0}.xlsx".format("sursaud-covid19-quotidien")
         res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write = False)
 
         var_groupby = ["dep", "date_de_passage"]
@@ -73,7 +73,7 @@ if __name__ == "__main__":
         writer.save()
 
     # =============================================================================
-    # data covid hospit hebdo
+    # data sursaud covid hebdo
     # =============================================================================
 
     try:
@@ -91,7 +91,7 @@ if __name__ == "__main__":
         df0 = df0[["numero_ligne"] + list_cols]
 
         var_groupby = ["dep", "semaine"]
-        path =  output_folder_path + "incoherences_{0}.xlsx".format(file_name)
+        path =  output_folder_path + "incoherences_{0}.xlsx".format("sursaud-covid19-hebdomadaire")
         res, sub_df = generate_rapport_incoherence_long(df0, "sursaud_cl_age_corona", var_groupby, path)
 
 
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         df = df[["numero_ligne"] + list_cols]
 
 
-        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
+        path = output_folder_path + "incoherences_{0}.xlsx".format("donnees-hospitalieres-covid19")
 
         var_groupby = ["dep", "jour"]
         df0 = df.copy(deep = True)
@@ -209,7 +209,7 @@ if __name__ == "__main__":
         sub_df_concat.sort_values(by="id", inplace=True)
         sub_df_concat.drop("id", axis=1, inplace=True)
 
-        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
+        path = output_folder_path + "incoherences_{0}.xlsx".format("donnees-hospitalieres-etablissements-covid19")
 
         res = pd.DataFrame({"Metrique": ["Nombre de lignes total", "Nombre de lignes avec incohérence"],
                             "Nombre": [len(hosp_cum), len(sub_df)]})
@@ -241,7 +241,7 @@ if __name__ == "__main__":
         df0 = df.copy(deep = True)
 
         list_dict_formules = generate_dict_formula(df)
-        path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
+        path = output_folder_path + "incoherences_{0}.xlsx".format("donnees-tests-covid19-labo-quotidien")
         res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write = False)
 
         var_groupby = ["dep", "jour"]
@@ -266,7 +266,7 @@ if __name__ == "__main__":
             file_name = None
 
         if file_name:
-            logging.info("processing file {}".format(file_name))
+            logging.info("processing file {}".format("donnees-tests-covid19-labo-hebdomadaire"))
             list_cols = list(df.columns)
             df["numero_ligne"] = df.index + 1
             df = df[["numero_ligne"] + list_cols]
