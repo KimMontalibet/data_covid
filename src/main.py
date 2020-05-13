@@ -266,7 +266,7 @@ if __name__ == "__main__":
             file_name = None
 
         if file_name:
-            logging.info("processing file {}".format("donnees-tests-covid19-labo-hebdomadaire"))
+            logging.info("processing file {}".format(file_name))
             list_cols = list(df.columns)
             df["numero_ligne"] = df.index + 1
             df = df[["numero_ligne"] + list_cols]
@@ -275,7 +275,7 @@ if __name__ == "__main__":
             df0 = df.copy(deep=True)
 
             list_dict_formules = generate_dict_formula(df)
-            path = output_folder_path + "incoherences_{0}.xlsx".format(file_name)
+            path = output_folder_path + "incoherences_{0}.xlsx".format("donnees-tests-covid19-labo-hebdomadaire")
             res, sub_df = generate_rapport_incoherence_genre_wide(df, list_dict_formules, path, write=False)
 
             var_groupby = ["dep", "week"]
